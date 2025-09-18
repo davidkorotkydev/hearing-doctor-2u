@@ -1,0 +1,29 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+using WebApi.Data;
+using WebApi.Entities;
+
+namespace WebApi.Controllers;
+
+public class MembersController(AppDbContext context) : BaseApiController
+{
+    [Authorize]
+    /* `( ... )/members/( id )` */
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AppUser>> GetMember(string id)
+    {
+        var member = await context.Users.FindAsync(id);
+        if (member == null) return NotFound();
+        return member;
+    }
+
+    /* `( ... )/members` */
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<AppUser>>> GetMembers()
+    {
+        var members = await context.Users.ToListAsync();
+        return members;
+    }
+}

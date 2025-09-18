@@ -1,0 +1,36 @@
+<header [class.is-scrolled]="isScrolled()" class="fixed z-1 flex w-full justify-center bg-(--background-color) p-[1.5rem] lg:px-[4rem] lg:py-[1.875rem]">
+    <div class="flex w-360 items-center justify-center lg:justify-between">
+        <a routerLink="/"><app-logo [svgClass]="`h-[2rem] lg:h-[2.5rem]`" /></a>
+        <div class="hidden lg:flex lg:items-center">
+            @if (!r("/login") && !r("/signup")) {
+                <nav class="flex">
+                    <a [routerLinkActiveOptions]="{ exact: true }" class="button mx-[1rem] text-center" routerLink="/about" routerLinkActive="text-primary">About us</a>
+                    <a [routerLinkActiveOptions]="{ exact: true }" class="button mr-[1rem] text-center" routerLink="/tools" routerLinkActive="text-primary">Tools and resources</a>
+                    <a [routerLinkActiveOptions]="{ exact: true }" class="button text-center" routerLink="/connect" routerLinkActive="text-primary">Connect your practice</a>
+                </nav>
+                <div id="header-divider" class="mr-[1rem] h-[2.5rem] w-[1rem] border-r-1 border-r-(--border-color)"></div>
+            }
+            @if (accountService.currentUser(); as user) {
+                <app-dropdown [containerClass]="`justify-end`">
+                    <button id="dropdown__head" class="button font-medium">Welcome, {{ user.displayName }}!</button>
+                    <div id="dropdown__body" class="mt-[0.5rem] rounded-[calc(var(--radius-tin)+1px+0.5rem)] border-1 border-(--border-color) bg-(--background-color) p-[0.5rem]">
+                        <a class="button mb-[0.5rem]">Edit profile</a>
+                        <a (click)="signOut()" class="button">Sign out</a>
+                    </div>
+                </app-dropdown>
+            } @else {
+                @if (!r("/login")) {
+                    <!-- Branch between two distinct elements, otherwise we need to manage CSS transitions between route changes. -->
+                    @if (!r("/signup")) {
+                        <a class="button font-medium" routerLink="/login">Log in</a>
+                    } @else {
+                        <a class="button button--outline font-medium" routerLink="/login">Log in</a>
+                    }
+                }
+                @if (!r("/signup")) {
+                    <a class="button button--secondary ml-[1rem] font-medium" routerLink="/signup">Sign up</a>
+                }
+            }
+        </div>
+    </div>
+</header>

@@ -1,0 +1,355 @@
+/*
+    # Author's note #
+
+    Welcome to our styles! We use a combination of Tailwind and plain CSS. Where possible, we combine Tailwind classes into reusable component classes under relaxed BEM-style naming [[.](https://getbem.com/naming)]. Regarding which styles we declare using Tailwind and which we don't, we attempt to adhere to the following distinction.
+    
+    - We use plain CSS for declaring "dynamic" properties such as those with many variations (or those affected by "modifiers" in BEM terms), those involved with transitions and animations, or those with values set by JavaScript.
+    - We use Tailwind for declaring "static" properties such as layout, text, and one-off adjustments.
+*/
+
+@import "tailwindcss";
+
+@font-face {
+    font-display: swap;
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 100 900;
+    src: url("/fonts/inter-variable.woff2") format("woff2");
+}
+
+@theme {
+    /*
+        # Tailwind theme variables #
+    */
+    --breakpoint-lg: 69rem;
+    /* `#1d293d` is Tailwind's `--color-slate-800` or `oklch(27.9% 0.041 260.031)`. We use the hex here because it is referenced in our JavaScript. */
+    --color-dark: #1d293d;
+    /* [Safari] [2025-9-17 ET] When the system is in dark mode, Safari's `theme-color` feature does not support extending `body`'s `background-color` when set to `#fff`. This happens when our application forces light mode in dark mode. In this case, `theme-color` appears to fall back to its initial value. */
+    --color-light: #fafafa;
+    --font-sans: "Inter", "sans-serif";
+    /*
+        # Custom theme variables [[.](https://tailwindcss.com/docs/theme#theme-variable-namespaces)] #
+    */
+    /* `--color-*` */
+    --color-primary: var(--color-blue-500);
+    --color-secondary: var(--color-emerald-500);
+    /* `--radius-*` */
+    --radius-tin: 0.5rem;
+    /* * */
+    --transition-duration: 150ms;
+    /*
+        # Fine-grained text adjustments #
+
+        We manually adjust the visual line height of UI text. The constants below are namespaced by font, alphabet, and size.
+    */
+    --INTER--LATIN--3XL--LINE: 0.69rem;
+    --INTER--LATIN--SM--LINE: 0.321rem;
+    --INTER--LATIN--SM--PADDING: 0.867rem;
+    /* ## `3xl` ## */
+    --line-bottom-3xl: var(--INTER--LATIN--3XL--LINE);
+    --line-top-3xl: var(--INTER--LATIN--3XL--LINE);
+    /* ## `sm` ## */
+    --line-bottom-sm: var(--INTER--LATIN--SM--LINE);
+    --line-top-sm: var(--INTER--LATIN--SM--LINE);
+    /* `--padding-*` */
+    --padding-sm: var(--INTER--LATIN--SM--PADDING);
+}
+
+html,
+[data-color-scheme="light"] {
+    --background-color: var(--color-light);
+    --color: black;
+    --color--inverse: white;
+    --color--300: var(--color-slate-300);
+    --color--400: var(--color-slate-400);
+    /* * */
+    --border-color: --alpha(var(--color) / 20%);
+    --color--500: var(--color-slate-500);
+    --color--placeholder: --alpha(var(--color) / 40%);
+}
+
+[data-color-scheme="dark"] {
+    --background-color: var(--color-dark);
+    --color: white;
+    --color--inverse: black;
+    --color--300: var(--color-slate-700);
+    --color--400: var(--color-slate-600);
+}
+
+body {
+    @apply bg-(--background-color);
+}
+
+/* [[.](https://tailwindcss.com/docs/adding-custom-styles#functional-utilities)] */
+@utility line-* {
+    &::after,
+    &::before {
+        content: "";
+        display: block;
+        height: 0;
+        width: 0;
+    }
+
+    /* The top margin of `after` is the _bottom_ of the line. */
+    &::after {
+        margin-top: --value(--line-bottom-*);
+    }
+
+    /* The bottom margin of `before` is the _top_ of the line. */
+    &::before {
+        margin-bottom: --value(--line-top-*);
+    }
+}
+
+@layer components {
+    .button {
+        @apply relative line-sm block cursor-pointer rounded-tin border-1 border-solid px-[calc(var(--padding-sm)*1.25)] py-sm text-sm/0 text-nowrap;
+        --button--background-color: var(--background-color);
+        --button--border-color: var(--button--background-color);
+        --button--color: var(--color);
+        --button--hover--background-color: oklch(from var(--button--background-color) calc(l - 0.1) c h);
+        --button--hover--border-color: var(--button--hover--background-color);
+        --button--hover--color: var(--color);
+        --button--transition-duration: var(--transition-duration);
+        background-color: var(--button--background-color);
+        border-color: var(--button--border-color);
+        color: var(--button--color);
+        top: 0;
+        /* * */
+        transition:
+            background-color var(--button--transition-duration),
+            border-color var(--button--transition-duration),
+            color var(--button--transition-duration);
+
+        &:hover {
+            @media (hover: hover) {
+                background-color: var(--button--hover--background-color);
+                border-color: var(--button--hover--border-color);
+                color: var(--button--hover--color);
+            }
+        }
+
+        &:active {
+            top: 1px;
+        }
+    }
+
+    .button--icon {
+        @apply flex p-[0.437rem];
+    }
+
+    .button--clear {
+        --button--background-color: transparent;
+        --button--border-color: transparent;
+        --button--hover--background-color: oklch(from var(--background-color) calc(l - 0.1) c h);
+    }
+
+    .button--outline {
+        --button--border-color: var(--color);
+    }
+
+    /* * */
+
+    .button--primary {
+        --button--background-color: var(--color-primary);
+        --button--hover--color: white;
+        --button--color: white;
+    }
+
+    .button--secondary {
+        --button--background-color: var(--color-secondary);
+        --button--hover--color: white;
+        --button--color: white;
+    }
+
+    .button--pill {
+        @apply rounded-[3rem];
+        --button--transition-duration: 500ms;
+    }
+
+    .input-text {
+        @apply h-[calc(0.78rem+1.72rem)] rounded-tin border-1 border-solid px-[0.75rem] text-sm/0 text-(--color) placeholder:text-(--color--placeholder) focus:z-10;
+        --input-text--transition-duration: var(--transition-duration);
+        background-color: var(--background-color);
+        border-color: var(--border-color);
+        outline-color: transparent;
+        outline-style: solid;
+        outline-width: 2px;
+        outline-offset: 2px;
+        /* * */
+        transition:
+            background-color var(--input-text--transition-duration),
+            border-color var(--input-text--transition-duration),
+            outline-color var(--input-text--transition-duration);
+
+        &:hover {
+            @media (hover: hover) {
+                /* background-color: oklch(from var(--background-color) calc(l - 0.05) c h); */
+                border-color: var(--color--placeholder);
+            }
+        }
+
+        &:focus {
+            border-color: var(--color);
+            outline-color: var(--color);
+            outline-style: solid;
+            outline-width: 2px;
+            outline-offset: 2px;
+        }
+    }
+}
+
+/*
+    Styles for `hero-animation.ts` only apply to JavaScript-appended SVG elements if they are declared here. We forgo namespacing variables; `#hero-animation` is unlikely to be reused anywhere else.
+*/
+
+#hero-animation {
+    --fade: 500ms;
+}
+
+[data-color-scheme="dark"] #hero-animation {
+    --backdrop: #1d2c4d;
+    --green: #023e58;
+    --road: #304a7d;
+    --store: #0d2c4d;
+    --water: #0e1626;
+}
+
+[data-color-scheme="light"] #hero-animation {
+    --backdrop: #f8f7f7;
+    --green: #c3f1d5;
+    --road: #cbd9e6;
+    --store: #faf5eb;
+    --water: #90daee;
+}
+
+#hero-animation .backdrop {
+    fill: var(--backdrop);
+    /* * */
+    height: 100%;
+    width: 100%;
+}
+
+#hero-animation .green {
+    fill: var(--green);
+}
+
+#hero-animation .store {
+    fill: var(--store);
+}
+
+#hero-animation .water {
+    fill: var(--water);
+}
+
+#hero-animation .road {
+    fill: none;
+    stroke: var(--road);
+    stroke-linecap: round;
+    stroke-width: 0.075px;
+}
+
+#hero-animation .trip {
+    --duration: 0;
+    --length: 0;
+    animation: trip var(--duration) var(--fade) ease-in-out forwards;
+    stroke-dasharray: var(--length);
+    stroke-dashoffset: var(--length);
+    /* * */
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 0.1px;
+}
+
+@keyframes trip {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+#hero-animation .house {
+    fill: var(--color-primary);
+}
+
+#hero-animation .source {
+    fill: white;
+    r: 0.2px;
+    stroke: var(--color-primary);
+    stroke-width: 0.1px;
+}
+
+#hero-animation .source-ripple {
+    animation: source-ripple 1500ms var(--fade) ease-out infinite;
+    /* transform: scale(1); */
+    /* transform-box: fill-box; */
+    /* transform-origin: center; */
+    /* * */
+    fill: none;
+    r: 0.2px;
+    stroke: var(--color-primary);
+    stroke-width: 0.1px;
+}
+
+@keyframes source-ripple {
+    to {
+        r: 0.5px;
+        opacity: 0;
+    }
+}
+
+#hero-animation .left-edge,
+#hero-animation .right-edge {
+    height: 100%;
+    width: 100%;
+}
+
+#hero-animation .fade {
+    --duration: 0;
+    animation: fade var(--duration) linear forwards;
+    /* * */
+    fill: var(--background-color);
+    /* * */
+    height: 100%;
+    width: 100%;
+}
+
+@keyframes fade {
+    10% {
+        opacity: 0;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+#hero-animation .developer__stray {
+    stroke: red;
+    stroke-linecap: round;
+    stroke-width: 0.1px;
+}
+
+#hero-animation .developer__trip {
+    fill: lime;
+    r: 0.2px;
+    opacity: 0.5;
+}
+
+#hero-animation path.developer__goal {
+    opacity: 0.25;
+    stroke: blue;
+    stroke-linecap: round;
+    stroke-width: 0.1px;
+}
+
+#hero-animation circle.developer__goal {
+    fill: blue;
+    r: 0.1px;
+    opacity: 0.25;
+}
+
+/* This ends the section above. */

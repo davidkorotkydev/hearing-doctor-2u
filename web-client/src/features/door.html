@@ -1,0 +1,25 @@
+<div class="flex justify-center pt-[1.5rem] lg:pt-[1.875rem]">
+    <div class="mx-[1rem] flex grow flex-col items-center rounded-[calc(var(--radius-tin)+1px+1rem)] border-1 border-(--border-color) bg-(--background-color) px-[1rem] pb-[1rem] lg:mx-0 lg:w-80 lg:grow-0">
+        <h2 class="my-[1.5rem] line-3xl text-3xl/0 font-semibold text-(--color) lg:my-[1.875rem]">
+            @if (r("/login")) {
+                <span>Log in</span>
+            } @else if (r("/signup")) {
+                <span>Sign up</span>
+            }
+        </h2>
+        @if (r("/login")) {
+            <form #logInForm="ngForm" (ngSubmit)="logIn()" class="flex w-full flex-col">
+                <input [(ngModel)]="authenticationCredentials.email" class="input-text mb-[1rem]" name="email" placeholder="Email" />
+                <input [(ngModel)]="authenticationCredentials.password" class="input-text mb-[1rem]" name="password" placeholder="Password" type="password" />
+                <button class="button button--primary font-medium">Continue</button>
+            </form>
+        } @else if (r("/signup")) {
+            <form #signUpForm="ngForm" (ngSubmit)="signUp()" class="flex w-full flex-col">
+                <input [(ngModel)]="registrationCredentials.email" class="input-text mb-[1rem]" name="email" placeholder="Email" />
+                <input [(ngModel)]="registrationCredentials.displayName" class="input-text mb-[1rem]" name="displayName" placeholder="Name" />
+                <input [(ngModel)]="registrationCredentials.password" class="input-text mb-[1rem]" name="password" placeholder="Password" type="password" />
+                <button class="button button--secondary font-medium">Continue</button>
+            </form>
+        }
+    </div>
+</div>

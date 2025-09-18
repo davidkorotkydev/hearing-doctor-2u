@@ -1,0 +1,6 @@
+Migrations/
+Secrets/*
+bin/
+obj/
+*.db
+*.db-*
